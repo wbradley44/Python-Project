@@ -4,6 +4,7 @@ import time
 pg.init()
 
 class Ball():
+    #make a class for the ball that contains the variables for x and y position as well as speed
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -13,12 +14,11 @@ class Ball():
         self.falling = False
         
     def draw(self, screen):
+        #Uses the pygame draw command, but redraws the same ball
         pg.draw.circle(screen, (0,0,0), (self.x, self.y), 10)
 
-    def move(self):
-        self.x += math.sin(self.angle) * self.speed
-        self.y -= math.cos(self.angle) * self.speed
     def update(self):
+        #this is the position update while the ball is falling
         if self.falling and self.y< 540:
             self.speed += .9
             self.y = int(self.y + self.speed )
@@ -60,6 +60,9 @@ while running:
     pg.display.set_caption("height: {} speed: {:.2f}".format(540-ball.y, ball.speed))
     pg.display.flip()
     redrawGameWindow()
+    
     clock.tick(10)
     time.sleep(.1)
+    #sets the framerate to 10/s and the refresh rate to the same
+    #this prevents the code from executing faster than the framerate
 pg.quit()
