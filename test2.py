@@ -17,8 +17,12 @@ class Ball():
         self.y -= math.cos(self.angle) * self.speed
 
     def drop(self):
-        self.angle = -math.pi/2
-        
+        g = 1
+        while self.y < 540:
+            self.speed += g
+            self.y = int(self.y + self.speed )
+            if self.y + 10:
+                self.speed = 0
 
 def redrawGameWindow():
     screen.fill((255,255,255))
