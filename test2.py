@@ -7,7 +7,7 @@ class Ball():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.speed = 0.01
+        self.speed = 0
         self.angle = math.pi/2
         self.falling = False
         
@@ -24,6 +24,7 @@ class Ball():
         elif self.falling and self.y >=540:
             self.y = 540
             self.falling = 0
+            self.speed = 0
 
 def redrawGameWindow():
     screen.fill((255,255,255))
@@ -50,7 +51,7 @@ while running:
                 ball.y +=10
             elif keyname == "SPACE":
                 ball.falling = True
-    pg.display.set_caption("height: {}".format(540-ball.y))
+    pg.display.set_caption("height: {} speed: {:.2f}".format(540-ball.y, ball.speed))
     pg.display.flip()
     redrawGameWindow()
     clock.tick(10)
