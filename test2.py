@@ -7,6 +7,7 @@ class Ball():
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.bounce = .4
         self.speed = 0
         self.angle = math.pi/2
         self.falling = False
@@ -21,10 +22,15 @@ class Ball():
         if self.falling and self.y< 540:
             self.speed += .9
             self.y = int(self.y + self.speed )
-        elif self.falling and self.y >=540:
+        elif self.falling and self.y >= 540:
+            self.y = 539
+            self.speed = -self.speed * self.bounce
+        elif self.falling and self.y > 530 and abs(self.speed) <= 2:
             self.y = 540
-            self.falling = 0
             self.speed = 0
+            self.falling = False
+        elif not self.falling:
+            self.speed = 0.0
 
 def redrawGameWindow():
     screen.fill((255,255,255))
@@ -43,14 +49,14 @@ while running:
             running = False
         elif event.type == pg.KEYDOWN:
             keyname = pg.key.name(event.key).upper()
-            if keyname == "UP":
+            if keyname == "UP" and not ball.falling:
                 #moves ball up on up arrow press
                 ball.y -=10
-            elif keyname == "DOWN":
+            elif keyname == "DOWN" and ball.y<540 and not ball.falling:
                 #moves ball down on down arrow press
                 ball.y +=10
             elif keyname == "SPACE":
-                ball.falling = True
+                ball.falling =  not ball.falling
     pg.display.set_caption("height: {} speed: {:.2f}".format(540-ball.y, ball.speed))
     pg.display.flip()
     redrawGameWindow()
