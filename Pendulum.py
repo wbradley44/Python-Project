@@ -34,12 +34,12 @@ class pend:
 top = pend(1,1)  
 bottom = pend(1,1,theta1 = 0, l1 = 1)      
 
-def update(up, dn,t0,t1,tstep):
+def update(up, dn,t0 = 0,t1 = 10,tstep = .1):
     #integrate both for the timestep
     #take in initial conditions
     y0 = [up.theta, up.omega, dn.theta, dn.omega]
     # theta 1, omega 1, theta 2, omega 2
-    t = np.arange(0,10,.1)
+    t = np.arange(t0, t1, tstep)
     sol = odeint(omegadot, y0, t, args = (up.m, up.l, dn.m, dn.l))
     #sol is a tx4 arrarys that contains th1, w1, th1, w2
     plt.plot(t, sol[:,0], 'b', label = 'theta(t)')
@@ -52,5 +52,5 @@ def omegadot(y, t, m1, l1, m2, l2):
     alpha = [omega1, (-g * (2*m1 + m2) * sin(theta1) - m2 * g * sin(theta1-theta2) - 2 * sin(theta1-theta2) * m2 * (omega2**2 * l2 + omega1**2 * l1 * cos(theta1-theta2))) / (l1 * (2 * m1 + m2 - m2 * cos(2*theta1 - 2 * theta2))),omega2, (2 * sin(theta1 - theta2) * (omega1**2 * l1 * (m1+m2) + g * (m1 + m2) * cos(theta1) + omega2**2 * l2 * m2 * cos(theta1-theta2))) / (l2 * (2 * m1 + m2 - m2 * cos(2 * theta1 - 2 * theta2)))]
     #equation defining the angular acceleration of the top pendulum
     return alpha
-def 
+
     
