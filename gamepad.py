@@ -12,7 +12,7 @@ while run:
     #Quit when 'x' is pressed if there is a pygame window open.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = True
+            run = False
 
     #Finds joysticks (gamepads) that are connected to the computer.
     #Can find Playstation 4, XBox One, and Switch Pro Controllers, but will only
