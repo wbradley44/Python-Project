@@ -98,7 +98,7 @@ while run:
                 top.theta = np.pi/2
                 bottom.theta = np.pi/2
             elif event.key == pg.K_SPACE:
-                drop = True
+                drop = !drop
             elif event.key == pg.K_ESCAPE:
                 run = False
     if drop:
