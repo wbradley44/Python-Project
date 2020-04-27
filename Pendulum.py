@@ -107,5 +107,6 @@ while run:
         t0,t1 = t1,t1+inc
     findXY(top,bottom)
     redraw(top,bottom)
+    pg.display.flip()
     clock.tick(30) 
     time.sleep(0.03)
