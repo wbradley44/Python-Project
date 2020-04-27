@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Apr 20 17:15:58 2020
 
+@author: Admin
+"""
 import os
 import numpy as np
 import time
@@ -51,40 +56,36 @@ def omegadot(y, t, m1, l1, m2, l2):
     return alpha
 
 def findXY(up,dn):
-    up.x = up.l * sin(up.theta)
-    up.y = -up.l * cos(up.theta)
-    dn.x = dn.l * sin(dn.theta) + sin(up.theta) * up.l
-    dn.y = -dn.l * cos(dn.theta) - cos(up.theta) * up.l
+    scrnsz = int(300*(top.l+bottom.l))
+    middlex = int(scrnsz/2)
+    up.x = middlex + int(200*(up.l * sin(up.theta)))
+    up.y = middlex + int(200*(-up.l * cos(up.theta)))
+    dn.x = middlex + int(200*dn.l * sin(dn.theta) + sin(up.theta) * up.l)
+    dn.y = middlex + int(200*(-dn.l * cos(dn.theta) - cos(up.theta) * up.l))
     return
 
 def redraw(up,dn):
-    ln1 = ax.plot((0,up.x),(0,up.y),lw=4)
-    ln2 = ax.plot((up.x,dn.x),(up.y,dn.y),lw=4)
-    cir1 = Circle((up.x,up.y),.15,fc = 'b', zorder = 10)
-    cir2 = Circle((dn.x,dn.y),.15,fc = 'r', zorder = 10)
-    ax.add_patch(cir1)
-    ax.add_patch(cir2)
-    plt.show()
+    screen.fill((255,255,255))
+    pg.draw.line(screen,(0,0,0),(int(55*(top.l+bottom.l)),int(55*(top.l+bottom.l))),(up.x,up.y),10)
+    pg.draw.line(screen,(0,0,0),(up.x,up.y),(dn.x,dn.y),10)
+    cir1 = pg.draw.circle(screen, (200,0,0), (up.x, up.y), 25)
+    cir2 = pg.draw.circle(screen, (0,200,0), (dn.x, dn.y), 25)
 clock = pg.time.Clock()
-fig, ax = plt.subplots()
-ax.set_xlim(-1.5*(top.l+bottom.l),1.5*(top.l+bottom.l))
-ax.set_ylim(-1.5*(top.l+bottom.l),1.5*(top.l+bottom.l))
-ax.set_aspect('equal', adjustable='box')
-plt.axis('off')
-
+screen = pg.display.set_mode([int(300*(top.l+bottom.l)),int(300*(top.l+bottom.l))])
 run = True
 drop = False
 t0 = 0
 t1 = .03
 inc = .03
 tstep =  .005
-screen = pg.display.set_mode([600,600])
+screen.fill((255,255,255))
 while run: 
     #os.system('cls')
-    print(top.theta)
     #Quit when 'x' is pressed if there is a pygame window open.
     for event in pg.event.get():
-        if event.type == pg.KEYDOWN:
+        if event.type == pg.QUIT:
+            run = False
+        elif event.type == pg.KEYDOWN:
             if event.key == pg.K_UP:
                 top.theta = np.pi
                 bottom.theta = np.pi
@@ -98,7 +99,7 @@ while run:
                 top.theta = np.pi/2
                 bottom.theta = np.pi/2
             elif event.key == pg.K_SPACE:
-                drop = !drop
+                drop = not drop
             elif event.key == pg.K_ESCAPE:
                 run = False
     if drop:
