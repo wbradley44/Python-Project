@@ -105,6 +105,7 @@ while run:
         update(top, bottom,t0,t1+tstep,tstep)
         t0,t1 = t1,t1+inc
 
+    findXY(top,bottom)
     redraw(top,bottom)
     clock.tick(30) 
     time.sleep(0.03)
