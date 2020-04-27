@@ -13,6 +13,7 @@ from scipy.integrate import odeint
 import pygame as pg
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
+import random
 
 """ 
 Assumptions: center point located at 0,0
@@ -58,10 +59,10 @@ def omegadot(y, t, m1, l1, m2, l2):
 def findXY(up,dn):
     scrnsz = int(300*(top.l+bottom.l))
     middlex = int(scrnsz/2)
-    up.x = middlex + int(200*(up.l * sin(up.theta)))
-    up.y = middlex + int(200*(-up.l * cos(up.theta)))
-    dn.x = middlex + int(200*dn.l * sin(dn.theta) + sin(up.theta) * up.l)
-    dn.y = middlex + int(200*(-dn.l * cos(dn.theta) - cos(up.theta) * up.l))
+    up.x = middlex + int(np.round(200*(up.l * sin(up.theta))))
+    up.y = middlex + int(np.round(200*(-up.l * cos(up.theta))))
+    dn.x = middlex + int(np.round(200*dn.l * sin(dn.theta) + sin(up.theta) * up.l))
+    dn.y = middlex + int(np.round(200*(-dn.l * cos(dn.theta) - cos(up.theta) * up.l)))
     return
 
 def redraw(up,dn):
@@ -90,8 +91,8 @@ while run:
                 top.theta = np.pi
                 bottom.theta = np.pi
             elif event.key == pg.K_DOWN:
-                top.theta = np.random.rand(-np.pi,np.pi)
-                bottom.theta = np.random.rand(-np.pi,np.pi)
+                top.theta = random.uniform(-np.pi, np.pi)
+                bottom.theta = random.uniform(-np.pi, np.pi)
             elif event.key == pg.K_LEFT:
                 top.theta = -np.pi/2
                 bottom.theta = -np.pi/2
