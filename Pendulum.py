@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Apr 20 17:15:58 2020
 
-@author: Admin
-"""
 import os
 import numpy as np
 import time
@@ -45,7 +40,10 @@ def update(up, dn,t0,t1,tstep):
     t = np.arange(t0,t1,tstep)
     sol = odeint(omegadot, y0, t, args = (up.m, up.l, dn.m, dn.l))
     #sol is a tx4 arrarys that contains th1, w1, th1, w2
-    plt.plot(t, sol[:,0], 'b', label = 'theta(t)')
+    up.theta = sol[-1,0]
+    up.omega = sol[-1,1]
+    dn.theta = sol[-1,2]
+    dn.omega = sol[-1,3]
 
 def omegadot(y, t, m1, l1, m2, l2):
     # must be in this form for scipy.integrate.odeint
@@ -77,7 +75,6 @@ run = True
 drop = False
 t0 = 0
 t1 = .03
-inc = .03
 tstep =  .005
 screen.fill((255,255,255))
 while run: 
@@ -103,9 +100,10 @@ while run:
                 drop = not drop
             elif event.key == pg.K_ESCAPE:
                 run = False
+                top.omega = 0
+                bottom.omega = 0
     if drop:
         update(top, bottom,t0,t1+tstep,tstep)
-        t0,t1 = t1,t1+inc
     findXY(top,bottom)
     redraw(top,bottom)
     pg.display.flip()
