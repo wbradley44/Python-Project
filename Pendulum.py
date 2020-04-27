@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Apr 20 17:15:58 2020
 
-@author: Admin
-"""
 import os
 import numpy as np
 import time
@@ -63,10 +58,10 @@ def findXY(up,dn):
     return
 
 def redraw(up,dn):
-    ln1 = ax.plot((0,up.x),(0,up.y),lw=2)
-    ln2 = ax.plot((up.x,dn.x),(up.y,dn.y),lw=2)
-    cir1 = Circle((up.x,up.y),.05,fc = 'b', zorder = 10)
-    cir2 = Circle((dn.x,dn.y),.05,fc = 'r', zorder = 10)
+    ln1 = ax.plot((0,up.x),(0,up.y),lw=4)
+    ln2 = ax.plot((up.x,dn.x),(up.y,dn.y),lw=4)
+    cir1 = Circle((up.x,up.y),.15,fc = 'b', zorder = 10)
+    cir2 = Circle((dn.x,dn.y),.15,fc = 'r', zorder = 10)
     ax.add_patch(cir1)
     ax.add_patch(cir2)
     plt.show()
@@ -83,20 +78,25 @@ t0 = 0
 t1 = .03
 inc = .03
 tstep =  .005
-while run:
-    os.system('cls')
+screen = pg.display.set_mode([600,600])
+while run: 
+    #os.system('cls')
+    print(top.theta)
     #Quit when 'x' is pressed if there is a pygame window open.
-    
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_UP:
-                break
+                top.theta = np.pi
+                bottom.theta = np.pi
             elif event.key == pg.K_DOWN:
-                break
+                top.theta = np.random.rand(-np.pi,np.pi)
+                bottom.theta = np.random.rand(-np.pi,np.pi)
             elif event.key == pg.K_LEFT:
                 top.theta = -np.pi/2
+                bottom.theta = -np.pi/2
             elif event.key == pg.K_RIGHT:
                 top.theta = np.pi/2
+                bottom.theta = np.pi/2
             elif event.key == pg.K_SPACE:
                 drop = True
             elif event.key == pg.K_ESCAPE:
@@ -104,7 +104,6 @@ while run:
     if drop:
         update(top, bottom,t0,t1+tstep,tstep)
         t0,t1 = t1,t1+inc
-
     findXY(top,bottom)
     redraw(top,bottom)
     clock.tick(30) 
