@@ -4,13 +4,15 @@ Created on Mon Apr 20 17:15:58 2020
 
 @author: Admin
 """
-
+import os
 import numpy as np
+import time
 from numpy import sin
 from numpy import cos
 from scipy.integrate import odeint
 import pygame as pg
 import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
 
 """ 
 Assumptions: center point located at 0,0
@@ -20,7 +22,7 @@ x2 = x1 + l2 sin(theta2)
 y2 = y1 - l2 cos(theta2)
 alpha = ddt omega = ddt ddt theta
 """
-
+pg.init()
 class pend:
     def __init__(self, m, l, theta1 = 0, l1 = 0):
         self.m = m
@@ -29,17 +31,17 @@ class pend:
         self.omega = 0
         self.alpha = 0
         self.x = self.l * sin(self.theta) + sin(theta1) * l1
-        self.y= -self.l * cos(self.theta) - cos(theta1) * l1
+        self.y = -self.l * cos(self.theta) - cos(theta1) * l1
 
 top = pend(1,1)  
 bottom = pend(1,1,theta1 = 0, l1 = 1)      
 
-def update(up, dn,t0 = 0,t1 = 10,tstep = .1):
+def update(up, dn,t0,t1,tstep):
     #integrate both for the timestep
     #take in initial conditions
     y0 = [up.theta, up.omega, dn.theta, dn.omega]
     # theta 1, omega 1, theta 2, omega 2
-    t = np.arange(t0, t1, tstep)
+    t = np.arange(t0,t1,tstep)
     sol = odeint(omegadot, y0, t, args = (up.m, up.l, dn.m, dn.l))
     #sol is a tx4 arrarys that contains th1, w1, th1, w2
     plt.plot(t, sol[:,0], 'b', label = 'theta(t)')
@@ -53,4 +55,56 @@ def omegadot(y, t, m1, l1, m2, l2):
     #equation defining the angular acceleration of the top pendulum
     return alpha
 
+def findXY(up,dn):
+    up.x = up.l * sin(up.theta)
+    up.y = -up.l * cos(up.theta)
+    dn.x = dn.l * sin(dn.theta) + sin(up.theta) * up.l
+    dn.y = -dn.l * cos(dn.theta) - cos(up.theta) * up.l
+    return
+
+def redraw(up,dn):
+    ln1 = ax.plot((0,up.x),(0,up.y),lw=2)
+    ln2 = ax.plot((up.x,dn.x),(up.y,dn.y),lw=2)
+    cir1 = Circle((up.x,up.y),.05,fc = 'b', zorder = 10)
+    cir2 = Circle((dn.x,dn.y),.05,fc = 'r', zorder = 10)
+    ax.add_patch(cir1)
+    ax.add_patch(cir2)
+    plt.show()
+clock = pg.time.Clock()
+fig, ax = plt.subplots()
+ax.set_xlim(-1.5*(top.l+bottom.l),1.5*(top.l+bottom.l))
+ax.set_ylim(-1.5*(top.l+bottom.l),1.5*(top.l+bottom.l))
+ax.set_aspect('equal', adjustable='box')
+plt.axis('off')
+
+run = True
+drop = False
+t0 = 0
+t1 = .03
+inc = .03
+tstep =  .005
+while run:
+    os.system('cls')
+    #Quit when 'x' is pressed if there is a pygame window open.
     
+    for event in pg.event.get():
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_UP:
+                break
+            elif event.key == pg.K_DOWN:
+                break
+            elif event.key == pg.K_LEFT:
+                top.theta = -np.pi/2
+            elif event.key == pg.K_RIGHT:
+                top.theta = np.pi/2
+            elif event.key == pg.K_SPACE:
+                drop = True
+            elif event.key == pg.K_ESCAPE:
+                run = False
+    if drop:
+        update(top, bottom,t0,t1+tstep,tstep)
+        t0,t1 = t1,t1+inc
+
+    redraw(top,bottom)
+    clock.tick(30) 
+    time.sleep(0.03)
