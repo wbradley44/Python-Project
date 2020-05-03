@@ -58,25 +58,32 @@ def findXY(up,dn):
     scrnsz = int(300*(top.l+bottom.l))
     middlex = int(scrnsz/2)
     up.x = middlex + int(np.round(200*(up.l * sin(up.theta))))
-    up.y = middlex + int(np.round(200*(-up.l * cos(up.theta))))
-    dn.x = middlex + int(np.round(200*dn.l * sin(dn.theta) + sin(up.theta) * up.l))
-    dn.y = middlex + int(np.round(200*(-dn.l * cos(dn.theta) - cos(up.theta) * up.l)))
+    up.y = middlex + int(np.round(200*(up.l * cos(up.theta))))
+    dn.x = middlex + int(np.round(200*(dn.l * sin(dn.theta) + sin(up.theta) * up.l)))
+    dn.y = middlex - int(np.round(200*(-dn.l * cos(dn.theta) - cos(up.theta) * up.l)))
     return
 
 def redraw(up,dn):
     screen.fill((255,255,255))
-    pg.draw.line(screen,(0,0,0),(int(55*(top.l+bottom.l)),int(55*(top.l+bottom.l))),(up.x,up.y),10)
+    pg.draw.line(screen,(0,0,0),(300, 300),(up.x,up.y),10)
     pg.draw.line(screen,(0,0,0),(up.x,up.y),(dn.x,dn.y),10)
     cir1 = pg.draw.circle(screen, (200,0,0), (up.x, up.y), 25)
     cir2 = pg.draw.circle(screen, (0,200,0), (dn.x, dn.y), 25)
+
 clock = pg.time.Clock()
 screen = pg.display.set_mode([int(300*(top.l+bottom.l)),int(300*(top.l+bottom.l))])
+
 run = True
 drop = False
 t0 = 0
 t1 = .03
 tstep =  .005
 screen.fill((255,255,255))
+
+pg.joystick.init()
+gamepad = pg.joystick.Joystick(0)
+gamepad.init()
+
 while run: 
     #os.system('cls')
     #Quit when 'x' is pressed if there is a pygame window open.
@@ -102,8 +109,13 @@ while run:
                 run = False
                 top.omega = 0
                 bottom.omega = 0
+    if abs(gamepad.get_axis(2)) > 0.2:
+        top.theta += gamepad.get_axis(2)*np.pi/20
+    elif abs(gamepad.get_axis(0)) > 0.2:
+        bottom.theta +=gamepad.get_axis(0)*np.pi/20
     if drop:
         update(top, bottom,t0,t1+tstep,tstep)
+
     findXY(top,bottom)
     redraw(top,bottom)
     pg.display.flip()
