@@ -1,13 +1,9 @@
-
-import os
 import numpy as np
 import time
 from numpy import sin
 from numpy import cos
 from scipy.integrate import odeint
 import pygame as pg
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle
 import random
 
 """ 
@@ -55,7 +51,7 @@ def omegadot(y, t, m1, l1, m2, l2):
     return alpha
 
 def findXY(up,dn):
-    scrnsz = int(300*(top.l+bottom.l))
+    scrnsz = int(400*(top.l+bottom.l))
     middlex = int(scrnsz/2)
     up.x = middlex + int(np.round(200*(up.l * sin(up.theta))))
     up.y = middlex + int(np.round(200*(up.l * cos(up.theta))))
@@ -65,13 +61,13 @@ def findXY(up,dn):
 
 def redraw(up,dn):
     screen.fill((255,255,255))
-    pg.draw.line(screen,(0,0,0),(300, 300),(up.x,up.y),10)
+    pg.draw.line(screen,(0,0,0),(400, 400),(up.x,up.y),10)
     pg.draw.line(screen,(0,0,0),(up.x,up.y),(dn.x,dn.y),10)
     cir1 = pg.draw.circle(screen, (200,0,0), (up.x, up.y), 25)
     cir2 = pg.draw.circle(screen, (0,200,0), (dn.x, dn.y), 25)
 
 clock = pg.time.Clock()
-screen = pg.display.set_mode([int(300*(top.l+bottom.l)),int(300*(top.l+bottom.l))])
+screen = pg.display.set_mode([int(400*(top.l+bottom.l)),int(400*(top.l+bottom.l))])
 
 run = True
 drop = False
@@ -81,9 +77,11 @@ tstep =  .005
 screen.fill((255,255,255))
 
 pg.joystick.init()
-gamepad = pg.joystick.Joystick(0)
-gamepad.init()
-
+try:
+    gamepad = pg.joystick.Joystick(0)
+    gamepad.init()
+except:
+    print("No joystick detected, I guess you're not a gamer")
 while run: 
     #os.system('cls')
     #Quit when 'x' is pressed if there is a pygame window open.
@@ -92,15 +90,23 @@ while run:
             run = False
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_UP:
+                top.omega = 0
+                bottom.omega = 0
                 top.theta = np.pi
-                bottom.theta = np.pi
+                bottom.theta = np.pi - .001
             elif event.key == pg.K_DOWN:
+                top.omega = 0
+                bottom.omega = 0
                 top.theta = random.uniform(-np.pi, np.pi)
                 bottom.theta = random.uniform(-np.pi, np.pi)
             elif event.key == pg.K_LEFT:
+                top.omega = 0
+                bottom.omega = 0
                 top.theta = -np.pi/2
                 bottom.theta = -np.pi/2
             elif event.key == pg.K_RIGHT:
+                top.omega = 0
+                bottom.omega = 0
                 top.theta = np.pi/2
                 bottom.theta = np.pi/2
             elif event.key == pg.K_SPACE:
@@ -109,12 +115,19 @@ while run:
                 run = False
                 top.omega = 0
                 bottom.omega = 0
-    if abs(gamepad.get_axis(2)) > 0.2:
-        top.theta += gamepad.get_axis(2)*np.pi/20
-    elif abs(gamepad.get_axis(0)) > 0.2:
-        bottom.theta +=gamepad.get_axis(0)*np.pi/20
+    try:
+        if abs(gamepad.get_axis(2)) > 0.2:
+            top.theta += gamepad.get_axis(2)*np.pi/20
+        elif abs(gamepad.get_axis(0)) > 0.2:
+            bottom.theta +=gamepad.get_axis(0)*np.pi/20
+    except:
+        pg.display.flip()
     if drop:
         update(top, bottom,t0,t1+tstep,tstep)
+    else:
+        top.omega = 0
+        bottom.omega = 0
+    
 
     findXY(top,bottom)
     redraw(top,bottom)
