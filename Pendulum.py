@@ -67,7 +67,7 @@ def findXY(up,dn):
 #redraws the elements on the screen
 def redraw(up,dn):
     screen.fill((255,255,255))
-    pg.draw.line(screen,(0,0,0),(400, 400),(up.x,up.y),10)
+    pg.draw.line(screen,(0,0,0),(int(200*(top.l+bottom.l)), int(200*(top.l+bottom.l))),(up.x,up.y),10)
     pg.draw.line(screen,(0,0,0),(up.x,up.y),(dn.x,dn.y),10)
     cir1 = pg.draw.circle(screen, (200,0,0), (up.x, up.y), 25)
     cir2 = pg.draw.circle(screen, (0,200,0), (dn.x, dn.y), 25)
